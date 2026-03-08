@@ -1,188 +1,160 @@
-# Hướng dẫn chạy dự án Expo Health
+# **1. Introduction**
 
-Tài liệu này mô tả từng bước setup môi trường, cấu hình Supabase và chạy ứng dụng **expo-health** (theo dõi sức khỏe: bữa ăn, nước, cân nặng, tập luyện, giấc ngủ, bài viết).
+**HealthStep** là một ứng dụng di động hỗ trợ theo dõi và cải thiện sức khỏe cá nhân, được thiết kế nhằm cung cấp một nền tảng toàn diện giúp người dùng quản lý cân nặng, dinh dưỡng và hoạt động thể chất hằng ngày.
 
----
+Ứng dụng không chỉ dừng lại ở việc ghi chép dữ liệu, mà còn phân tích các chỉ số khoa học như **BMR (Tỷ lệ chuyển hóa cơ bản)** và **TDEE (Tổng năng lượng tiêu hao hằng ngày)** để đưa ra gợi ý phù hợp với mục tiêu giảm cân, duy trì hoặc tăng cơ.
 
-## 1. Công nghệ cần cài đặt
+HealthStep hướng đến việc giúp người dùng xây dựng lối sống lành mạnh, khoa học và bền vững dựa trên dữ liệu cá nhân.
 
-| Công nghệ | Phiên bản khuyến nghị | Ghi chú |
-|-----------|------------------------|---------|
-| **Node.js** | 18.x hoặc 20.x LTS | [nodejs.org](https://nodejs.org) |
-| **npm** | 9.x trở lên | Đi kèm Node.js |
-| **Expo CLI** | Mới nhất | Chạy `npx expo` (không cần cài global) |
-| **Git** | Bất kỳ | Để clone và quản lý mã nguồn |
-| **Supabase** | Tài khoản miễn phí | [supabase.com](https://supabase.com) — dùng làm backend (Auth, DB, Realtime, Storage) |
+# **2. Vision & Mission**
 
-### Chạy trên thiết bị thật / simulator
+## **Vision**
 
-- **iOS**: Mac với **Xcode** (chỉ cần khi chạy `expo run:ios` trên simulator hoặc thiết bị).
-- **Android**: **Android Studio** + Android SDK (khi chạy `expo run:android` hoặc dùng Expo Go).
-- **Expo Go** (tùy chọn): Cài app Expo Go trên điện thoại để mở bản development build qua QR.
+Trở thành ứng dụng di động hàng đầu tại Việt Nam trong lĩnh vực theo dõi và cải thiện sức khỏe cá nhân dựa trên dữ liệu khoa học.
 
----
+## **Mission**
 
-## 2. Clone và mở dự án
+- Cung cấp nền tảng theo dõi sức khỏe đơn giản nhưng hiệu quả.
+- Tự động tính toán và phân tích các chỉ số cơ thể.
+- Khuyến khích hình thành thói quen sống lành mạnh thông qua nhắc nhở thông minh và biểu đồ tiến trình trực quan.
 
-```bash
-# Clone (nếu chưa có)
-git clone <url-repo> expo-health-steps
-cd expo-health-steps
+# **3. Target Users**
 
-# Hoặc nếu đã có thư mục, chỉ cần vào thư mục
-cd expo-health-steps
-```
+**Primary Users:**
 
----
+Học sinh, sinh viên, người trẻ và nhân viên văn phòng mong muốn quản lý cân nặng và cải thiện thể trạng.
 
-## 3. Cài đặt dependencies
+**Secondary Users:**
 
-```bash
-npm install
-```
+Người tập gym, người chơi thể thao cần theo dõi lượng calo nạp vào và tiêu hao mỗi ngày.
 
-Đảm bảo không có lỗi; nếu có conflict phiên bản, có thể chạy `npm ci` (sau khi đã có `package-lock.json` ổn định).
+# **4. Technology Stack**
 
----
+## **🖥️ Front-end - Expo CLI (React Native)**
 
-## 4. Cấu hình môi trường (Environment)
+- Hỗ trợ đa nền tảng: Hoạt động mượt mà trên cả iOS và Android.
+- Hot Reloading: Cập nhật thay đổi ngay lập tức trong quá trình phát triển.
+- Tích hợp thư viện mở rộng: Dễ dàng thêm biểu đồ, animation và giao diện responsive.
 
-### 4.1. File `.env`
+## **☁️ Back-end - Supabase**
 
-Tạo hoặc chỉnh file `.env` ở **thư mục gốc** của dự án:
+- Cơ sở dữ liệu Realtime: Cập nhật dữ liệu sức khỏe ngay khi có thay đổi.
+- Xác thực bảo mật: Hỗ trợ đăng nhập bằng email với mật khẩu được mã hóa.
+- Lưu trữ tệp tin: Lưu ảnh đại diện người dùng qua hệ thống Storage Bucket.
 
-```env
-# URL backend (nếu bạn dùng custom backend)
-EXPO_PUBLIC_URL=http://localhost:5005
+# **5. Key Features**
 
-# Supabase (thay bằng project của bạn)
-EXPO_PUBLIC_SUPABASE_URL=https://xxxxx.supabase.co
-EXPO_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-```
+## **🏠 Welcome Screen**
 
-- Lấy **Supabase URL** và **anon (public) key** tại: Supabase Dashboard → Project Settings → API.
-- Nếu hiện tại app đang hardcode Supabase trong `src/lib/supabase.ts`, bạn nên chuyển sang dùng biến môi trường để dễ đổi project:
+- Hiển thị lời chào cá nhân hóa và tổng quan nhanh tình trạng calo trong ngày.
+- Điều hướng nhanh đến bảng điều khiển và các mục ghi chép.
+- Giao diện tối giản, dễ thao tác.
 
-```ts
-const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL ?? '...';
-const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY ?? '...';
-```
+## **🔐 Login & Authentication**
 
-### 4.2. Bảo mật
+- Đăng nhập bằng email và mật khẩu.
+- Bảo mật bằng mã hóa mật khẩu và định danh người dùng qua UUID.
+- Duy trì phiên đăng nhập trên nhiều thiết bị.
 
-- **Không** commit file `.env` hoặc key bí mật lên Git (đã có trong `.gitignore`).
-- Chỉ dùng **anon key** ở client; key `service_role` chỉ dùng ở server/backend.
+## **📊 Health Dashboard**
 
----
+- Hiển thị các chỉ số quan trọng như BMR và TDEE.
+- So sánh lượng calo nạp vào và calo tiêu hao.
+- Biểu đồ trực quan theo tuần/tháng về cân nặng và tiến trình.
 
-## 5. Setup Supabase (Database, Auth, Storage, Realtime)
+## **🍽️ Nutrition Tracking**
 
-Tạo một project mới trên [Supabase](https://supabase.com) (hoặc dùng project có sẵn), sau đó vào **SQL Editor** và chạy lần lượt các file SQL trong thư mục `supabase/` **theo đúng thứ tự** dưới đây.
+- Ghi lại bữa ăn theo nhóm (Sáng, Trưa, Tối, Phụ).
+- Tự động tính tổng lượng calo trong ngày.
+- So sánh với mục tiêu calo dựa trên TDEE.
 
-### Thứ tự chạy SQL (bắt buộc)
+## **🏃 Exercise Tracking**
 
-| Bước | File | Mô tả |
-|------|------|--------|
-| 1 | `schema.sql` **hoặc** `setup_steps.sql` | **Chọn một trong hai.** `schema.sql`: tạo toàn bộ bảng cơ bản (profiles, weight_logs, water_logs, meal_plans, meals, meal_logs, articles, saved_articles) + RLS + trigger tạo profile khi đăng ký. `setup_steps.sql`: bản có DROP bảng cũ rồi tạo lại (dùng khi muốn reset DB). |
-| 2 | `add_exercise_sleep_tables.sql` | Tạo bảng `exercise_logs`, `sleep_logs` + RLS + index. |
-| 3 | `add_meal_type_column.sql` | Thêm cột `meal_type` vào `meal_logs` (breakfast/lunch/snack/dinner). Nếu DB mới chưa có dòng nào trong `meal_logs`, vẫn chạy được. |
-| 4 | `notifications_schema.sql` | Tạo bảng `notifications`, `notification_settings`, hàm `create_notification`, các trigger mục tiêu (nước, calo, tập) và trigger tạo cài đặt + thông báo chào mừng khi tạo profile. |
-| 5 | `add_notification_triggers.sql` | Cập nhật logic trigger (BMR/TDEE, mục tiêu nước theo cân nặng, streak,…). Chạy sau `notifications_schema.sql`. Sau khi chạy xong, nên xóa trigger cũ để tránh trùng: trong SQL Editor chạy: `DROP TRIGGER IF EXISTS create_notification_settings_trigger ON public.profiles;` |
-| 6 | `enable_realtime_notifications.sql` | Bật Realtime cho bảng `notifications` (app nhận thông báo realtime). |
-| 7 | `fix_meal_logs_policy.sql` | Thêm policy RLS **DELETE** cho `meal_logs` (cho phép user xóa log của mình). |
-| 8 | `storage_policies.sql` | Policy cho Storage: upload/cập nhật/xóa avatar trong bucket `profiles` (thư mục `avatars`). **Lưu ý:** Trong Dashboard cần tạo bucket tên `profiles` (public nếu muốn xem ảnh không cần auth). |
+- Ghi nhận các hoạt động thể chất (Cardio, Strength, Đi bộ…).
+- Ước tính lượng calo tiêu hao theo thời gian vận động.
+- Theo dõi tiến độ hoàn thành mục tiêu tập luyện.
 
-### Seed dữ liệu (tùy chọn nhưng nên dùng)
+## **⚖️ Weight Management**
 
-| File | Mô tả |
-|------|--------|
-| `meals_data.sql` | Thêm danh sách món ăn mẫu (Việt Nam) vào `meals`. |
-| `seed_articles_simple.sql` | Thêm bài viết mẫu vào `articles` (nutrition, cooking_tips, home_workout). |
+- Cập nhật cân nặng định kỳ.
+- Tự động tính lại BMR và TDEE khi cân nặng thay đổi.
+- Hiển thị biểu đồ xu hướng tăng/giảm cân.
 
-Chạy 2 file này sau khi đã chạy xong 8 bước trên.
+## **🔔 Smart Notifications**
 
-### Tạo Storage bucket trong Supabase Dashboard
+- Nhắc nhở khi gần đạt hoặc vượt mục tiêu calo.
+- Thông báo khi hoàn thành mục tiêu vận động.
+- Cập nhật tức thì nhờ công nghệ Realtime.
 
-1. Vào **Storage** → **New bucket**.
-2. Tên bucket: **`profiles`**.
-3. Chọn **Public** nếu muốn ảnh đại diện xem được qua URL công khai.
-4. Sau đó chạy `storage_policies.sql` như bước 8.
+## **⚙️ Account Settings**
 
----
+- Quản lý hồ sơ cá nhân (tuổi, chiều cao, cân nặng, mục tiêu).
+- Đổi mật khẩu và cài đặt quyền riêng tư.
+- Tùy chỉnh loại thông báo nhận được.
 
-## 6. Cấu hình Auth (Supabase)
+# **6. System Architecture**
 
-- **Authentication → Providers**: Bật **Email**. Nếu dùng OTP/ magic link thì bật thêm tùy chọn tương ứng.
-- **URL redirect**: Trong Supabase Auth URL config, thêm scheme của app (ví dụ `myapp://`) nếu dùng deep link cho đổi mật khẩu / xác thực email.
+## **🧩 Overview**
 
----
+- Client: Ứng dụng di động xây dựng bằng Expo CLI (React Native).
+- Server: Supabase quản lý cơ sở dữ liệu PostgreSQL, xác thực và lưu trữ.
+- API: RESTful API đảm bảo trao đổi dữ liệu an toàn giữa ứng dụng và backend.
 
-## 7. Chạy ứng dụng
+## **🔄 Data Flow**
 
-### Development (Expo dev server)
+- Login: Thông tin đăng nhập được gửi đến Supabase Auth để xác thực.
+- Ghi dữ liệu sức khỏe: Nhật ký ăn uống, vận động và cân nặng được lưu vào database.
+- Tính toán tự động: Trigger trong database tính lại BMR và TDEE khi có thay đổi.
+- Realtime: Thông báo và dữ liệu được cập nhật ngay lập tức lên ứng dụng.
 
-```bash
-npm start
-```
+# **7. Data Model**
 
-Sau đó:
+## **🧱 Database Entities**
 
-- Quét **QR code** bằng **Expo Go** (Android/iOS) để mở app, hoặc
-- Nhấn **i** (iOS simulator) / **a** (Android emulator) nếu đã cài simulator/emulator.
+| **Bảng** | **Mô tả** |
+| --- | --- |
+| Profiles | Thông tin cá nhân: họ tên, tuổi, chiều cao, cân nặng, mục tiêu |
+| Weight_logs | ID người dùng, ngày ghi nhận, cân nặng |
+| Meals | Thư viện món ăn: tên, calo, protein, chất béo |
+| Meal_logs | ID người dùng, ID món ăn, loại bữa |
+| Exercise_logs | ID người dùng, loại hoạt động, thời gian, calo tiêu hao |
+| Notifications | ID người dùng, tiêu đề, nội dung, trạng thái đã đọc |
 
-### Chạy bản build bản địa (tùy chọn)
+## **🔗 Relationships**
 
-```bash
-# iOS (cần Xcode trên Mac)
-npm run ios
+- Một người dùng có thể có nhiều bản ghi cân nặng, bữa ăn và vận động.
+- Mỗi bản ghi liên kết với người dùng thông qua user_id.
+- Thông báo được tạo tự động dựa trên hoạt động và mục tiêu cá nhân.
 
-# Android (cần Android Studio + SDK)
-npm run android
-```
+# **8. Development Roadmap**
 
-### Web (nếu hỗ trợ)
+| **Giai đoạn** | **Mô tả** |
+| --- | --- |
+| Phase 1 | Thiết kế UI/UX và xây dựng tính năng theo dõi cơ bản |
+| Phase 2 | Tích hợp Supabase và cấu hình database |
+| Phase 3 | Triển khai tính năng Realtime và biểu đồ phân tích |
+| Phase 4 | Kiểm thử beta và tối ưu trước khi phát hành |
 
-```bash
-npm run web
-```
+# **9. Marketing Strategy**
 
----
+- Quảng bá trên mạng xã hội: Facebook, TikTok, cộng đồng sinh viên.
+- Hợp tác với phòng gym và câu lạc bộ thể thao.
+- Chia sẻ nội dung kiến thức về calo và dinh dưỡng.
 
-## 8. Tóm tắt thư mục `supabase/` sau khi dọn dẹp
+# **10. Conclusion**
 
-| File | Mục đích |
-|------|----------|
-| `schema.sql` | Schema gốc: bảng cơ bản + RLS + trigger tạo profile. |
-| `setup_steps.sql` | Reset DB + tạo lại bảng (tương đương schema + bước xóa cũ). |
-| `add_exercise_sleep_tables.sql` | Bảng tập luyện & giấc ngủ. |
-| `add_meal_type_column.sql` | Cột `meal_type` cho `meal_logs`. |
-| `notifications_schema.sql` | Bảng & trigger thông báo. |
-| `add_notification_triggers.sql` | Cập nhật logic trigger thông báo. |
-| `enable_realtime_notifications.sql` | Bật Realtime cho `notifications`. |
-| `fix_meal_logs_policy.sql` | Policy xóa `meal_logs`. |
-| `storage_policies.sql` | Policy Storage cho avatar. |
-| `meals_data.sql` | Seed món ăn mẫu. |
-| `seed_articles_simple.sql` | Seed bài viết mẫu. |
+HealthStep không chỉ là một ứng dụng theo dõi sức khỏe — mà là một người bạn đồng hành số giúp người dùng hiểu rõ cơ thể mình thông qua dữ liệu và phân tích khoa học.
 
-Các file **test/debug** (test notification, test data, debug meal logs, v.v.) đã được xóa; chỉ giữ lại file dùng cho **setup** và **seed** như trên.
+Sự kết hợp giữa Expo CLI và Supabase mang đến trải nghiệm mượt mà, bảo mật và cập nhật thời gian thực.
 
----
+Chúng tôi tin rằng HealthStep sẽ trở thành công cụ thiết yếu giúp người trẻ xây dựng lối sống khỏe mạnh và chủ động hơn mỗi ngày.
 
-## 9. Xử lý lỗi thường gặp
+# **💡 Tech Summary**
 
-- **Không kết nối được Supabase**: Kiểm tra `EXPO_PUBLIC_SUPABASE_URL`, `EXPO_PUBLIC_SUPABASE_ANON_KEY` và đã sửa `src/lib/supabase.ts` dùng env chưa. Kiểm tra Network trong Supabase Dashboard (cho phép domain nếu cần).
-- **RLS chặn truy vấn**: Đảm bảo đã chạy đủ các file schema và `fix_meal_logs_policy.sql`; kiểm tra user đã đăng nhập đúng.
-- **Realtime không nhận thông báo**: Đã chạy `enable_realtime_notifications.sql` chưa; kiểm tra publication `supabase_realtime` có bảng `notifications`.
-- **Upload avatar lỗi**: Đã tạo bucket `profiles` và chạy `storage_policies.sql` chưa; kiểm tra path `avatars/...`.
-
----
-
-## 10. Công nghệ trong dự án (tham khảo)
-
-- **Frontend**: React Native (Expo SDK ~53), React 19, Expo Router, NativeWind (Tailwind), React Query, Zustand, React Hook Form, Zod.
-- **Backend / BaaS**: Supabase (PostgreSQL, Auth, Realtime, Storage).
-- **Công cụ**: TypeScript, ESLint, Prettier.
-
-Sau khi làm đủ các bước trên, bạn có thể đăng ký/đăng nhập, cập nhật profile, log bữa ăn/nước/tập/ngủ, xem bài viết và nhận thông báo realtime.
-
-Demo apk app: https://drive.google.com/file/d/1LcpjdplYJRDDfFhqzmcn2_KDF7fs7NSL/view?usp=sharing
+| **Layer** | **Công nghệ** | **Mục đích** |
+| --- | --- | --- |
+| Frontend | Expo CLI (React Native) | Phát triển ứng dụng đa nền tảng |
+| Backend | Supabase | Database Realtime, Auth, Storage |
+| Auth | Supabase Auth | Xác thực bảo mật qua Email |
+| Charts | Victory Native / Recharts | Trực quan hóa dữ liệu sức khỏe |
+| Realtime | Supabase Realtime | Cập nhật thông báo tức thì |
